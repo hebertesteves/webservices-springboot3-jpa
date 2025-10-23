@@ -3,6 +3,7 @@ package com.hebertesteves.webservices.services;
 import com.hebertesteves.webservices.entities.User;
 import com.hebertesteves.webservices.repositories.UserRepository;
 import com.hebertesteves.webservices.services.exceptions.DatabaseException;
+import com.hebertesteves.webservices.services.exceptions.EmailAlreadyExistsException;
 import com.hebertesteves.webservices.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,12 @@ public class UserService {
     }
 
     public User insert(User obj) {
+        User existingUser  = repository.findByEmail(obj.getEmail());
+
+        if (existingUser  != null) {
+            throw new EmailAlreadyExistsException("Email already exists: " + obj.getEmail());
+        }
+
         return repository.save(obj);
     }
 
